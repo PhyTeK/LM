@@ -1,3 +1,8 @@
+# Text Mining Project
+# Philippe Martinet. May 2018.
+# Tryone() without pandas
+# Trytwo() Using Pandas
+
 import pandas as pd
 import numpy as np
 import matplotlib as mpl
@@ -283,7 +288,7 @@ def trytwo():
     
 
     
-
+#test push from emacs
 
 
 trytwo()
