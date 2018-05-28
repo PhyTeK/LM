@@ -1,6 +1,6 @@
 # Text Mining Project
 # Philippe Martinet. May 2018.
-# Tryone() without pandas
+# Tryone() without Pandas
 # Trytwo() Using Pandas
 
 import pandas as pd
@@ -220,8 +220,12 @@ def trytwo():
     print(categ_train.shape)
     
     count_vect = CountVectorizer()
-    X_train_counts = count_vect.fit_transform(aviat_train[1]) # Transform text data
-    y_train_counts = count_vect.fit_transform(categ_train) # Transform categories
+    X_train_counts = count_vect.fit_transform(aviat_train[1]) # Vectorize text data
+
+    # Here we need to vectorize each individual category which is easy because they are
+    # nummered from 0 to 21
+    
+    y_train_counts = count_vect.fit_transform(categ_train) # Vectorize the categories
     
     print(X_train_counts.shape)
     print(y_train_counts.shape)
@@ -233,7 +237,6 @@ def trytwo():
     #str=u'locate'
     #print(str,end=' ')
     #print(count_vect.vocabulary_.get(str))
-
 
 
     from sklearn.feature_extraction.text import TfidfTransformer
@@ -290,4 +293,64 @@ def trytwo():
     
 
 
-trytwo()
+trytwo() # Using Pandas
+
+
+
+from sklearn.datasets import make_multilabel_classification
+
+# this will generate a random multi-label dataset
+X, y = make_multilabel_classification(sparse = True, n_labels = 20,
+return_indicator = 'sparse', allow_unlabeled = False)
+
+# That's the way to do it
+
+# using binary relevance
+from skmultilearn.problem_transform import BinaryRelevance
+from sklearn.naive_bayes import GaussianNB
+
+# initialize binary relevance multi-label classifier
+# with a gaussian naive bayes base classifier
+classifier = BinaryRelevance(GaussianNB())
+
+# train
+classifier.fit(X_train, y_train)
+
+# predict
+predictions = classifier.predict(X_test)
+
+from sklearn.metrics import accuracy_score
+accuracy_score(y_test,predictions)
+
+
+# If we have correlation between labels/categories
+# using classifier chains
+from skmultilearn.problem_transform import ClassifierChain
+from sklearn.naive_bayes import GaussianNB
+
+# initialize classifier chains multi-label classifier
+# with a gaussian naive bayes base classifier
+classifier = ClassifierChain(GaussianNB())
+
+# train
+classifier.fit(X_train, y_train)
+
+# predict
+predictions = classifier.predict(X_test)
+
+accuracy_score(y_test,predictions)
+
+
+# Using adaptive algorythm MLkNN
+
+from skmultilearn.adapt import MLkNN
+
+classifier = MLkNN(k=20)
+
+# train
+classifier.fit(X_train, y_train)
+
+# predict
+predictions = classifier.predict(X_test)
+
+accuracy_score(y_test,predictions)
