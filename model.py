@@ -204,34 +204,58 @@ def clean_text(text):
     return text
 
 def trytwo():
+
+    # Import Data
     from sklearn.feature_extraction.text import CountVectorizer
 
     #filenames = ['TrainingData_small.txt']
-    aviat_train = pd.read_csv('TrainingData.txt',sep='~',header=None)
-    categ_train_c = pd.read_csv("TrainCategoryMatrix.csv",sep=',',header=None)
+    X_train = pd.read_csv('TrainingData.txt',sep='~',header=None)
+    X_test = pd.read_csv('TestData.txt',sep='~',header=None)
+    y_train_c = pd.read_csv("TrainCategoryMatrix.csv",sep=',',header=None)
+    y_test_c = pd.read_csv("TestTruth.csv",sep=',',header=None)
+    
     #categ_train = np.ravel(categ_train_c.replace(-1,0))
-    categ_train = categ_train_c.replace(-1,0)
+    y_train = y_train_c.replace(-1,0)
+    y_test = y_test_c.replace(-1,0)
 
 #    categ_train_join = categ_train.map(str)
 #    print(categ_train.head(10))
 #    print(categ_train_join.shape)
-    print(aviat_train.shape)
-    #print(categ_train)
-    print(categ_train.shape)
-    
-    count_vect = CountVectorizer()
-    X_train_counts = count_vect.fit_transform(aviat_train[1]) # Vectorize text data
-
-    # Here we need to vectorize each individual category which is easy because they are
-    # nummered from 0 to 21
-    
-    y_train_counts = count_vect.fit_transform(categ_train) # Vectorize the categories
-    
-    print(X_train_counts.shape)
-    print(y_train_counts.shape)
-    
+    print(X_train.shape)
+    print(y_train.shape)
+    print(X_test.shape)
+    print(y_test.shape)
     
 
+    # Tranform/Vectorize Data
+
+    #count_vect = CountVectorizer()
+    #X = count_vect.fit_transform(aviat_train[1]) # Vectorize text data
+
+
+    # using binary relevance
+    from skmultilearn.problem_transform import BinaryRelevance
+    from sklearn.naive_bayes import GaussianNB
+
+    # initialize binary relevance multi-label classifier
+    # with a gaussian naive bayes base classifier
+    classifier = BinaryRelevance(GaussianNB())
+
+    # train
+    classifier.fit(X_train, y_train)
+
+    # predict
+    predictions = classifier.predict(X_test)
+
+    from sklearn.metrics import accuracy_score
+    accuracy_score(y_test,predictions)
+
+
+    #y = count_vect.fit_transform(categ_train) # Vectorize the categories
+
+
+    
+    
     # How many?
     #vocab = count_vect.get_feature_names()
     #str=u'locate'
@@ -243,8 +267,8 @@ def trytwo():
     from sklearn.preprocessing import LabelBinarizer
     
     tfidf_transformer = TfidfTransformer()
-    X_train_tfidf = tfidf_transformer.fit_transform(X_train_counts)
-    #y_train_tfidf = LabelBinarized().fit_transform(y_train_counts)
+    X_train_tfidf = tfidf_transformer.fit_transform(X)
+    #y_train_tfidf = LabelBinarized().fit_transform(y)
 
     print(X_train_tfidf.shape)
     #print(y_train_tfidf.shape)
@@ -271,7 +295,7 @@ def trytwo():
 
     for cat in categs:
         print('Processing category {}'.format(cat))
-        clf = MultinomialNB().fit(X_train_tfidf, y_train_counts[cat]) # Train with the 22 labels
+        clf = MultinomialNB().fit(X_train_tfidf, y[cat]) # Train with the 22 labels
 
         # train the model using X_dtm & y
         NB_pipeline.fit(X_train, train[category])
@@ -290,67 +314,63 @@ def trytwo():
         print('Accuracy {}'.format(acc))
     
 
+def trythree():
+
+    # Import Data
+    from sklearn.feature_extraction.text import CountVectorizer
+
+    #filenames = ['TrainingData_small.txt']
+    X_train = pd.read_csv('TrainingData_small.txt',sep='~',header=None)
+    X_test = pd.read_csv('TestData.txt',sep='~',header=None)
+    y_train_c = pd.read_csv("TrainCategoryMatrix_small.csv",sep=',',header=None)
+    y_test_c = pd.read_csv("TestTruth.csv",sep=',',header=None)
+    
+    #categ_train = np.ravel(categ_train_c.replace(-1,0))
+    y_train = y_train_c.replace(-1,0)
+    y_test = y_test_c.replace(-1,0)
+
+#    categ_train_join = categ_train.map(str)
+#    print(categ_train.head(10))
+#    print(categ_train_join.shape)
+    print("X and y trainning data")
+    print(X_train.shape)
+    print(y_train.shape)
+    print("X and y Testing data")
+    print(X_test.shape)
+    print(y_test.shape)
+    
+
+    # Tranform/Vectorize Data
+    print("Vector")
+    count_vect = CountVectorizer()
+    X_train = count_vect.fit_transform(X_train[1]) # Vectorize text data
+    X_test = count_vect.fit_transform(X_test[1]) # Vectorize text data
+    print(X_train.shape)
+
+    # using binary relevance
+    from skmultilearn.problem_transform import BinaryRelevance
+    from sklearn.naive_bayes import GaussianNB
+
+    # initialize binary relevance multi-label classifier
+    # with a gaussian naive bayes base classifier
+    classifier = BinaryRelevance(GaussianNB())
+
+    # train
+    #print(X_train)
+    print("Train")
+    classifier.fit(X_train, y_train)
+
+    # predict
+    print("Predict")
+    print(X_test.shape)
+    predictions = classifier.predict(X_test)
+
+    from sklearn.metrics import accuracy_score
+    print("Accuracy")
+    print(accuracy_score(y_test,predictions))
+
     
 
 
-trytwo() # Using Pandas
+trythree() # Using Pandas
 
-
-
-from sklearn.datasets import make_multilabel_classification
-
-# this will generate a random multi-label dataset
-X, y = make_multilabel_classification(sparse = True, n_labels = 20,
-return_indicator = 'sparse', allow_unlabeled = False)
-
-# That's the way to do it
-
-# using binary relevance
-from skmultilearn.problem_transform import BinaryRelevance
-from sklearn.naive_bayes import GaussianNB
-
-# initialize binary relevance multi-label classifier
-# with a gaussian naive bayes base classifier
-classifier = BinaryRelevance(GaussianNB())
-
-# train
-classifier.fit(X_train, y_train)
-
-# predict
-predictions = classifier.predict(X_test)
-
-from sklearn.metrics import accuracy_score
-accuracy_score(y_test,predictions)
-
-
-# If we have correlation between labels/categories
-# using classifier chains
-from skmultilearn.problem_transform import ClassifierChain
-from sklearn.naive_bayes import GaussianNB
-
-# initialize classifier chains multi-label classifier
-# with a gaussian naive bayes base classifier
-classifier = ClassifierChain(GaussianNB())
-
-# train
-classifier.fit(X_train, y_train)
-
-# predict
-predictions = classifier.predict(X_test)
-
-accuracy_score(y_test,predictions)
-
-
-# Using adaptive algorythm MLkNN
-
-from skmultilearn.adapt import MLkNN
-
-classifier = MLkNN(k=20)
-
-# train
-classifier.fit(X_train, y_train)
-
-# predict
-predictions = classifier.predict(X_test)
-
-accuracy_score(y_test,predictions)
