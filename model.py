@@ -376,10 +376,9 @@ def tryfourth():
     print("# Import Data for adapted alogrithm")
     from sklearn.feature_extraction.text import CountVectorizer
 
-    #filenames = ['TrainingData_small.txt']
-    X_train = pd.read_csv('TrainingData_small.txt',sep='~',header=None)
+    X_train = pd.read_csv('TrainingData.txt',sep='~',header=None)
     X_test = pd.read_csv('TestData.txt',sep='~',header=None)
-    y_train_c = pd.read_csv("TrainCategoryMatrix_small.csv",sep=',',header=None)
+    y_train_c = pd.read_csv("TrainCategoryMatrix.csv",sep=',',header=None)
     y_test_c = pd.read_csv("TestTruth.csv",sep=',',header=None)
     
     #categ_train = np.ravel(categ_train_c.replace(-1,0))
@@ -406,21 +405,21 @@ def tryfourth():
     X_train = count_vect.fit_transform(X_train[1]) # Vectorize and normalize text data
     X_test = count_vect.transform(X_test[1]) # Vectorize (only) text data
 
-    print(type(X_train))
-    print("dir(X_train)",dir(X_train))
-    print()
-    print(type(y_train))
-    print("dir(y_train)",dir(y_train))
+    #print(type(X_train))
+    #print("dir(X_train)",dir(X_train))
+    #print()
+    #print(type(y_train))
+    #print("dir(y_train)",dir(y_train))
     #y_train = count_vect.fit_transform(y_train) # Vectorize and normalize text data
     #y_test = count_vect.transform(y_test) # Vectorize (only) text data
     #y_train = y_train.to_sparse().to_coo()
     #y_test = y_test.to_sparse().to_coo()
 
-    print(dir(y_train))
+    #print(dir(y_train))
     y_train = y_train.to_sparse().to_coo()
     y_test = y_test.to_sparse().to_coo()
 
-    print(X_train.shape)
+    #print(X_train.shape)
 
 
     from skmultilearn.problem_transform import BinaryRelevance
@@ -431,40 +430,44 @@ def tryfourth():
     #classifier = BinaryRelevance(GaussianNB())
 
     from skmultilearn.adapt import MLkNN
-    classifier = MLkNN(k=5)
+    classifier = MLkNN(k=20)
 
     print("Train Adapted algorithm")
     # train
 
-    print(type(X_train))
-    print(type(y_train))
-    print(type(X_test))
-    print(type(y_test))
+    #print(type(X_train))
+    #print(type(y_train))
+    #print(type(X_test))
+    #print(type(y_test))
 
-    print(X_train.dtype)
+    #print(X_train.dtype)
     
     classifier.fit(X_train, y_train)
 
     print("Predict")
     # predict
-    print(type(X_test))
-    print(type(y_test))
+    #print(type(X_test))
+    #print(type(y_test))
 
-    print(X_test)
+    #print(X_test)
     
     predictions = classifier.predict(X_test)
     
-    print(type(predictions))
+    #print(type(predictions))
 
     #print("Accuracy")
     from sklearn.metrics import accuracy_score
 
-    print(dir(predictions))
-    print('y_test',y_test)
-    print()
-    print('predictions')
-    print(predictions)
-    print(accuracy_score(y_test,predictions))
+    #print(dir(predictions))
+    #print('y_test',y_test)
+    #print()
+    #print('predictions')
+    #print(predictions)
+
+
+    #print(len(y_test.toarray()))
+    #print(len(predictions))
+    print(accuracy_score(y_test.toarray(),predictions))
     
     print("End")
     
