@@ -56,11 +56,6 @@ def dfScatter(df, xcol='x', ycol='y', zcol='z', catcol='module_id'):
     return plt
 
 
-#df = pd.DataFrame({'Height':np.random.normal(size=10),
-#                       'Weight':np.random.normal(size=10),
-#                       'Gender': ["Male","Male","Unknown","Male","Male",
-#                       "Female","Did not respond","Unknown","Female","Female"]})    
-
 fig = dfScatter(data)
 fig.savefig('fig1.png')
 
