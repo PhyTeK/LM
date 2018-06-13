@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import sys
 
 def main():
-    print("# Import Data for adapted alogrithm")
+    print("# Import Data")
     from sklearn.feature_extraction.text import CountVectorizer
 
     X_train = pd.read_csv('TrainingData.txt',sep='~',header=None)
